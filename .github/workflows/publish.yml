@@ -1,0 +1,25 @@
+name: Publish
+
+on:
+  push:
+    tags:
+    - v*
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download artifacts (S3)
+      uses: actions/aws/cli@master
+      with:
+        args: "s3 cp s3://${{ secrets.pkg_aws_bucket_name }}/artifact/${{ github.sha }} dist.zip"
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.pkg_aws_access_key_id }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.pkg_aws_secret_access_key }}
+        AWS_DEFAULT_REGION: ${{ secrets.pkg_aws_region }}
+    - name: Unzip distributions
+      run: unzip dist.zip
+    - uses: pypa/gh-action-pypi-publish@master
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}
