@@ -11,7 +11,7 @@ from .typing import MYPY_RUNNING
 from .util import getattr_recursive, sequences
 
 if MYPY_RUNNING:
-    from typing import Any, Iterator, List, Optional, Tuple
+    from typing import Any, Iterable, Iterator, List, Optional, Tuple
 
 
 class NamedObject(object):
@@ -57,7 +57,7 @@ def import_longest_module(spec):
         return None, spec
 
     leftover = ".".join(parts[len(seq) :])
-    obj = NamedObject(".".join(parts[:len(seq)]), last)
+    obj = NamedObject(".".join(parts[: len(seq)]), last)
     if leftover:
         return obj, leftover
     return obj, None
@@ -71,7 +71,7 @@ def get_longest_attribute(o, spec):
         try:
             o = o.get_attr(part)
         except AttributeError:
-            return o, '.'.join(parts[i:])
+            return o, ".".join(parts[i:])
 
     return o, None
 
@@ -79,18 +79,18 @@ def get_longest_attribute(o, spec):
 def package_autocomplete_names(package=None):
     # type: (Any) -> Iterator[str]
     path = None  # type: Optional[str]
-    prefix = ''
+    prefix = ""
     if package is not None:
         path = package.__path__
-        prefix = '{}.'.format(package.__name__)
+        prefix = "{}.".format(package.__name__)
 
     for _, name, is_pkg in iter_modules(path):
-        module_name = '{}{}'.format(prefix, name)
+        module_name = "{}{}".format(prefix, name)
         yield module_name
 
 
 def children_autocomplete_names(obj):
-    # type: (NamedObject) -> List[str]
+    # type: (NamedObject) -> Iterable[str]
     """Given a name, get the available children.
 
     Children can be:
@@ -112,7 +112,7 @@ def children_autocomplete_names(obj):
                 if name != "__class__" and inspect.isclass(attr.obj):
                     names.append(attr.name)
 
-    if hasattr(obj.obj, '__path__'):
+    if hasattr(obj.obj, "__path__"):
         names.extend(package_autocomplete_names(obj.obj))
 
     return names
@@ -139,7 +139,7 @@ def autocomplete(current):
     """
     # Whether to retrieve all members of the provided entity (vs doing a match based
     # on prefix for attributes).
-    get_members = current.endswith('.')
+    get_members = current.endswith(".")
     if get_members:
         current = current[:-1]
 
@@ -147,7 +147,7 @@ def autocomplete(current):
     # sibling matches.
     fully_qualified = get_members
 
-    if get_members or '.' in current:
+    if get_members or "." in current:
         context, leftover = import_longest_module(current)
         if context is None:
             # No matching modules found.
@@ -187,7 +187,7 @@ def autocomplete_bash():
     arg_index = comp_cword - 1
     comp_words_text = os.environ["COMP_WORDS"]
     comp_words = shlex.split(comp_words_text)
-    args = comp_words[1:comp_cword + 1]
+    args = comp_words[1 : comp_cword + 1]
 
     query = ".".join(args)
     at_top_level = len(query) == 0
@@ -207,9 +207,7 @@ def autocomplete_bash():
         # And a trailing period.
         to_strip += 1
 
-    last_names = [
-        name[to_strip:] for name in completions if not name.endswith(".")
-    ]
+    last_names = [name[to_strip:] for name in completions if not name.endswith(".")]
     # Thankfully Python identifiers are well-behaved, so we don't need to worry
     # about quoting the result.
     return " ".join(last_names)
@@ -227,7 +225,7 @@ autocomplete_scripts = {
         }
 
         complete -F _hlp_completion hlp
-    """,
+    """
 }
 
 
@@ -235,9 +233,17 @@ def main(input_args=None):
     if input_args is None:
         input_args = sys.argv[1:]
 
-    parser = argparse.ArgumentParser(description="Command-line access to Python's built-in 'help' function")
-    parser.add_argument("--autocomplete-init", choices=["bash"], help="Output autocomplete code.")
-    parser.add_argument("--autocomplete", action="store_true", help="Internal. Output autocomplete choices.")
+    parser = argparse.ArgumentParser(
+        description="Command-line access to Python's built-in 'help' function"
+    )
+    parser.add_argument(
+        "--autocomplete-init", choices=["bash"], help="Output autocomplete code."
+    )
+    parser.add_argument(
+        "--autocomplete",
+        action="store_true",
+        help="Internal. Output autocomplete choices.",
+    )
     parser.add_argument("query", nargs="*")
     args = parser.parse_args(input_args)
 

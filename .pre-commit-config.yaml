@@ -13,6 +13,7 @@ repos:
   rev: v0.730
   hooks:
   - id: mypy
+    exclude: tests
   - id: mypy
     name: mypy, for Py2
-    args: ["-2"]
+    args: ["-2", "--ignore-missing-imports"]
