@@ -239,11 +239,8 @@ def main(input_args=None):
     parser.add_argument(
         "--autocomplete-init", choices=["bash"], help="Output autocomplete code."
     )
-    parser.add_argument(
-        "--autocomplete",
-        action="store_true",
-        help="Internal. Output autocomplete choices.",
-    )
+    # Output autocomplete choices.
+    parser.add_argument("--autocomplete", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("query", nargs="*")
     args = parser.parse_args(input_args)
 
