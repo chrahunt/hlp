@@ -6,7 +6,7 @@ import shlex
 import sys
 from textwrap import dedent
 
-from .compat import iter_modules
+from .compat import builtins, iter_modules
 from .typing import MYPY_RUNNING
 from .util import getattr_recursive, sequences
 
@@ -23,7 +23,9 @@ class NamedObject(object):
     def get_attr(self, name):
         # type: (str) -> NamedObject
         obj = getattr(self.obj, name)
-        return NamedObject("{}.{}".format(self.name, name), obj)
+        if self.name:
+            name = "{}.{}".format(self.name, name)
+        return NamedObject(name, obj)
 
 
 def import_module(spec):
@@ -167,7 +169,9 @@ def autocomplete(current):
             return [context.name]
         options = children_autocomplete_names(context)
     else:
-        options = package_autocomplete_names()
+        options = list(package_autocomplete_names())
+        # Include builtins
+        options.extend(name for name in dir(builtins) if not name.startswith("__"))
 
     return sorted(m for m in options if m.startswith(current))
 

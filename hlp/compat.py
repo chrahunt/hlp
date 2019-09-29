@@ -9,6 +9,11 @@ if MYPY_RUNNING:
 
 PY2 = sys.version_info < (3,)
 
+if PY2:
+    import __builtin__ as builtins  # type: ignore
+else:
+    import builtins as builtins  # type: ignore
+
 
 if PY2:
 
