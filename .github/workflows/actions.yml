@@ -1,6 +1,10 @@
 name: Actions
 
-on: push
+on:
+  push:
+    # Only specifying branches means the workflow gets excluded for
+    # tags.
+    branches:
 
 jobs:
   test-and-build:
@@ -33,6 +37,8 @@ jobs:
       #  to this purpose.
     - name: Upload artifacts (S3)
       uses: actions/aws/cli@master
+      # Only run for merges to master.
+      if: github.ref == 'master'
       with:
         args: "s3 cp dist.zip s3://${{ secrets.pkg_aws_bucket_name }}/artifact/${{ github.sha }}"
       env:
