@@ -65,7 +65,15 @@ def test_autocomplete_bash_empty(fake_packages, monkeypatch):
     monkeypatch.setenv("COMP_WORDS", "hlp")
     monkeypatch.setenv("COMP_CWORD", "1")
     result = autocomplete_bash()
+    # Builtins
+    assert "open" in result
+    assert "ord" in result
+    # Standard library modules
+    assert "string" in result
+    assert "multiprocessing" in result
+    # Our packages
     assert "pkg_aaa" in result
+    # Only name, no trailing '.'
     assert "pkg_aaa." not in result
 
 
