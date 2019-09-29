@@ -38,7 +38,7 @@ jobs:
     - name: Upload artifacts (S3)
       uses: actions/aws/cli@master
       # Only run for merges to master.
-      if: github.ref == 'master'
+      if: github.ref == 'refs/heads/master'
       with:
         args: "s3 cp dist.zip s3://${{ secrets.pkg_aws_bucket_name }}/artifact/${{ github.sha }}"
       env:
