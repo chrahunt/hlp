@@ -2,9 +2,10 @@ name: Actions
 
 on:
   push:
-    # Only specifying branches means the workflow gets excluded for
-    # tags.
     branches:
+    - '**'
+    tags-ignore:
+    - '**'
 
 jobs:
   test-and-build:
