@@ -37,12 +37,10 @@ jobs:
       #  artifact sharing, we upload and download from an s3 bucket dedicated
       #  to this purpose.
     - name: Upload artifacts (S3)
-      uses: actions/aws/cli@master
       # Only run for merges to master.
       if: github.ref == 'refs/heads/master'
-      with:
-        args: "s3 cp dist.zip s3://${{ secrets.pkg_aws_bucket_name }}/artifact/${{ github.sha }}"
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.pkg_aws_access_key_id }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.pkg_aws_secret_access_key }}
         AWS_DEFAULT_REGION: ${{ secrets.pkg_aws_region }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.pkg_aws_secret_access_key }}
+      run: "s3 cp dist.zip s3://${{ secrets.pkg_aws_bucket_name }}/artifact/${{ github.sha }}"
