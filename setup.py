@@ -12,7 +12,7 @@ with io.open(readme_path, encoding="utf-8") as f:
 
 setup(
     name="hlp",
-    version="0.2.1",
+    version="0.2.2.dev0",
     author="Chris Hunt",
     author_email="chrahunt@gmail.com",
     classifiers=[
